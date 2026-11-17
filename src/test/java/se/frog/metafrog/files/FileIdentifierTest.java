@@ -27,6 +27,13 @@ public class FileIdentifierTest {
     }
 
     @Test
+    public void canIdentifyMP3File() throws IOException {
+        File file = Paths.get("mp3file").toFile();
+
+        assertEquals(FileTypes.MP3, FileIdentifier.identifyFileType(file));
+    }
+
+    @Test
     public void returnUnknownForTextFile() throws IOException {
         File file = Paths.get("textfile").toFile();
 
