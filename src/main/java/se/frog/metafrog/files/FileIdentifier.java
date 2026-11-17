@@ -1,5 +1,9 @@
 package se.frog.metafrog.files;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Map;
 
 public class FileIdentifier {
@@ -11,28 +15,37 @@ public class FileIdentifier {
     );
 
 
-    public static FileTypes identifyFileType(byte[] bytes) {
+    public static FileTypes identifyFileType(File file) {
 
-        for (Map.Entry<FileTypes, byte[]> entry : fileMagicks.entrySet()) {
-            if (fileMatchesType(entry.getValue(), bytes)) {
-                return entry.getKey();
+        int maxLength = fileMagicks.values().stream()
+                .mapToInt(fileMagick -> fileMagick.length)
+                .max()
+                .orElse(0);
+
+        try(FileInputStream fis = new FileInputStream(file)) {
+            byte[] fileHeader = fis.readNBytes(maxLength);
+
+            for (Map.Entry<FileTypes, byte[]> entry : fileMagicks.entrySet()) {
+                if (fileMatchesType(entry.getValue(), fileHeader)) {
+                    return entry.getKey();
+                }
             }
+            return FileTypes.UNKNOWN;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-
-        return FileTypes.UNKNOWN;
     }
 
-    private static boolean fileMatchesType(byte[] targetMagick, byte[] file){
-        if(targetMagick.length > file.length){
+    private static boolean fileMatchesType(byte[] targetMagick, byte[] header){
+        if(targetMagick.length > header.length){
             return false;
         }
 
         for (int i = 0; i < targetMagick.length; i++) {
-            if (targetMagick[i] != file[i]) {
+            if (targetMagick[i] != header[i]) {
                 return false;
             }
         }
-
         return true;
     }
 
