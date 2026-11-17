@@ -15,27 +15,41 @@ public class FileIdentifierTest {
 
     @Test
     public void canIdentifyFlacFile() throws IOException {
-        File file = Paths.get("flacfile").toFile();
+        File file = Paths.get("testfiles/test.flac").toFile();
         assertEquals(FileTypes.FLAC, FileIdentifier.identifyFileType(file));
     }
 
     @Test
     public void canIdentifyOpusFile() throws IOException {
-        File file = Paths.get("opusfile").toFile();
+        File file = Paths.get("testfiles/test.opus").toFile();
 
-        assertEquals(FileTypes.OPUS, FileIdentifier.identifyFileType(file));
+        assertEquals(FileTypes.OGG, FileIdentifier.identifyFileType(file));
+    }
+
+    @Test
+    public void canIdentifyOggFile() throws IOException {
+        File file = Paths.get("testfiles/test.ogg").toFile();
+
+        assertEquals(FileTypes.OGG, FileIdentifier.identifyFileType(file));
+    }
+
+    @Test
+    public void canIdentifyWavFile() throws IOException {
+        File file = Paths.get("testfiles/test.wav").toFile();
+
+        assertEquals(FileTypes.WAV, FileIdentifier.identifyFileType(file));
     }
 
     @Test
     public void canIdentifyMP3File() throws IOException {
-        File file = Paths.get("mp3file").toFile();
+        File file = Paths.get("testfiles/test.mp3").toFile();
 
         assertEquals(FileTypes.MP3, FileIdentifier.identifyFileType(file));
     }
 
     @Test
     public void returnUnknownForTextFile() throws IOException {
-        File file = Paths.get("textfile").toFile();
+        File file = Paths.get("testfiles/test.txt").toFile();
 
         assertEquals(FileTypes.UNKNOWN, FileIdentifier.identifyFileType(file));
     }

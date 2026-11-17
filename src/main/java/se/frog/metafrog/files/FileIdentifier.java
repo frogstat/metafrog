@@ -4,35 +4,31 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Map;
 
 public class FileIdentifier {
 
-    private static Map<FileTypes, byte[]> fileMagicks = Map.of(
-            FileTypes.FLAC, "fLaC".getBytes(),
-            FileTypes.OPUS, "OggS".getBytes(),
-            FileTypes.MP3, "ID3".getBytes()
-    );
+    public static FileTypes identifyFileType(File file) throws IOException {
 
-
-    public static FileTypes identifyFileType(File file) {
-
-        int maxLength = fileMagicks.values().stream()
-                .mapToInt(fileMagick -> fileMagick.length)
+        int maxLength = Arrays.stream(FileTypes.values())
+                .map(FileTypes::getSignature)
+                .mapToInt(signature -> signature.length)
                 .max()
                 .orElse(0);
 
         try(FileInputStream fis = new FileInputStream(file)) {
             byte[] fileHeader = fis.readNBytes(maxLength);
 
-            for (Map.Entry<FileTypes, byte[]> entry : fileMagicks.entrySet()) {
-                if (fileMatchesType(entry.getValue(), fileHeader)) {
-                    return entry.getKey();
+            for (FileTypes fileType : FileTypes.values()) {
+                byte[] signature = fileType.getSignature();
+
+                if (fileMatchesType(signature, fileHeader)) {
+                    return fileType;
                 }
             }
+
             return FileTypes.UNKNOWN;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
