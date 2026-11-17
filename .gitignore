@@ -5,7 +5,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 .kotlin
-
+testfiles
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
